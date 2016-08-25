@@ -1,0 +1,228 @@
+#!/bin/sh
+
+function sigIntHandler {
+	#handles sigint functions
+	echo "sigint recieved"
+	>beetle.state
+	rm -f beetle.state
+	>temp.txt
+	rm -f temp.txt
+	exit 2
+}
+
+function sigUsr1Handler {
+	echo "sigusr1 recieved"
+	echo "Square Size $min" 
+
+}
+
+imageFlag=0
+
+function sigUsr2Handler {
+	echo "sigusr2 recieved"
+	j=0
+	while read line
+	do
+		lastNumber=$(echo ${line##*" "})
+		echo "${array1[j]} $lastNumber" >> beetle.state
+		j=$(($j+1))
+	done < temp.txt
+	if [ "$pFlag" == 1 ]
+		then
+		echo "-i $min $max $step -n $num -p $imageFile" >> beetle.state
+	else
+		echo "-i $min $max $step -n $num" >> beetle.state
+	fi
+	rm -f temp.txt
+	exit 0
+}
+
+echo "${1-Nada} ${2-Nada} ${3-Nada}"
+
+
+iFlag=0
+nFlag=0
+pFlag=0
+rFlag=0
+
+argc=$#
+while [ "$1" != "" ] #Structure taken from http://linuxcommand.org/wss0130.php
+	do
+		case $1 in
+			-i)
+				if [ "$argc" != 6 ] && [ "$argc" != 8 ]
+					then
+					echo "Incorrect number of arguments"
+					exit 2
+				fi
+				shift
+				min=$1
+				var1=`echo $((($min*2)/2))`
+				if [ "$min" != "$var1" ]
+					then
+					echo "Incorrect Arguments - needs an integer"
+					exit 2
+				fi
+				shift
+				max=$1
+				var1=`echo $((($max*2)/2))`
+				if [ "$max" != "$var1" ]
+					then
+					echo "Incorrect Arguments - needs an integer"
+					exit 2
+				fi
+				shift
+				step=$1
+				var1=`echo $((($step*2)/2))`
+				if [ "$step" != "$var1" ]
+					then
+					echo "Incorrect Arguments - needs an integer"
+					exit 2
+				fi
+				nFlag=1
+				;;
+			-n)
+				if [ "$argc" != 6 ] && [ "$argc" != 8 ]
+					then
+					echo "Incorrect number of arguments"
+					exit 2
+				fi
+				shift
+				num=$1
+				var1=`echo $((($num*2)/2))`
+				if [ "$num" != "$var1" ] # (applies to all integers) from: http://stackoverflow.com/questions/3623662/bash-testing-if-a-variable-is-an-integer
+					then
+					echo "Incorrect Arguments - needs an integer"
+					exit 2
+				fi
+				iFlag=1
+				;;
+			-p)
+				if [ "$argc" != 8 ]
+					then
+					echo "Incorrect number of arguments or invalid usage"
+					exit 2
+				fi
+				shift
+				imageFile=$1
+				pFlag=1
+				;;
+			-r)
+
+				if [ "$argc" != 2 ]
+					then
+					echo "Incorrect number of arguments"
+					exit 2
+				fi
+				shift
+				filename=$1
+				echo "$1"
+				echo "$filename"
+				if ! [ -f $filename ]
+					then
+					echo "No such file!"
+					exit 2
+				fi
+				lastline=$(tail -1 $filename)
+				echo "$lastline"
+
+				head -n -1 $filename > temp.txt
+				mv temp.txt beetle.state
+				sh boiler $lastline
+				rFlag=1
+				rm -f $filename
+				exit 0
+				;;		  
+		esac
+		shift
+	done
+
+
+if [ "$argc" == 6 ]
+	then
+		if [ "$iFlag" == 0 ] || [ "$nFlag" == 0 ]
+			then
+				echo "Incorrect Arguments"
+				exit 2
+		fi
+
+
+elif [ "$argc" == 8 ]
+	then 
+		if [ "$iFlag" == 0 ] || [ "$nFlag" == 0 ] || [ "$pFlag" == 0 ]
+			then
+				echo "Incorrect Arguments"
+				exit 2
+		fi
+
+elif [ "$argc" == 2 ]
+	then
+		if [ "$rFlag" == 0 ]
+			then
+				echo "Incorrect Arguments"
+				exit 2
+		fi
+else
+	echo "Incorrect Number of Arguments"
+	exit 2
+fi
+
+
+trap sigIntHandler SIGINT
+trap sigUsr1Handler SIGUSR1
+trap sigUsr2Handler SIGUSR2
+
+
+if [[ "$min" -ge "$max" ]]
+	then
+	/home/f85/kearns/public/415/p6/beetle $min $num >> temp.txt &
+	wait $!
+	array1[0]=$min
+	arrayPid[0]=$!
+	min=$(($min+$step))
+fi
+	 
+i=0
+
+while [[ "$min" -le "$max" ]]
+do	
+	/home/f85/kearns/public/415/p6/beetle $min $num >> temp.txt &
+	wait $!
+	array1[i]=$min
+	arrayPid[i]=$!
+	min=$(($min+$step))	
+
+	i=$(($i+1))	
+done
+
+#trap SIGUSR1
+
+j=0
+while read line
+do
+	lastNumber=$(echo ${line##*" "})
+	echo "${array1[j]} $lastNumber" >> beetle.state
+	j=$(($j+1))
+done < temp.txt
+
+head -n -0 beetle.state
+if [ "$pFlag" == 1 ]
+	then
+	gnuplot <<EOF
+		set xlabel "Square Size (inches)"
+		set ylabel "Mean Beetle Lifetime (seconds)"
+		set grid
+		set autoscale
+		set term "png"
+		set output "${imageFile}"
+		plot "beetle.state" title ""
+EOF
+fi
+
+
+>beetle.state
+>temp.txt
+rm -f temp.txt
+rm -f beetle.state
+
+		

@@ -1,0 +1,176 @@
+# if [ "$#" == 6 ]
+# 	then
+# 	if [ "$1" == "-n" ]
+# 		then
+# 		num=$2
+# 		echo "-n first"
+# 		var1=`echo $((($num*2)/2))`
+# 		if [ "$num" != "$var1" ]
+# 			then
+# 			echo "Incorrect Arguments - needs an integer 5"
+# 			exit 2
+# 		fi
+# 		if [ "$3" == "-i" ]
+# 			then
+# 			min=$4
+# 			var1=`echo $((($min*2)/2))`
+# 			if [ "$min" != "$var1" ]
+# 				then
+# 				echo "Incorrect Arguments - needs an integer 6"
+# 				exit 2
+# 			fi
+# 			max=$5
+# 			var1=`echo $((($max*2)/2))`
+# 			if [ "$max" != "$var1" ]
+# 				then
+# 				echo "Incorrect Arguments - needs an integer 7"
+# 				exit 2
+# 			fi
+# 			step=$6
+# 			var1=`echo $((($step*2)/2))`
+# 			if [ "$step" != "$var1" ]
+# 				then
+# 				echo "Incorrect Arguments - needs an integer 8"
+# 				exit 2
+# 			fi
+# 		else
+# 			echo "Incorrect Arguments - needs an "-i""
+# 		fi
+# 	fi
+# 	if [ "$1" == "-i" ]
+# 		then
+# 		min=$2
+# 		var1=`echo $((($min*2)/2))`
+# 		if [ "$min" != "$var1" ]
+# 			then
+# 			echo "Incorrect Arguments - needs an integer 1"
+# 			exit 2
+# 		fi
+# 		max=$3
+# 		var1=`echo $((($max*2)/2))`
+# 		if [ "$max" != "$var1" ]
+# 			then
+# 			echo "Incorrect Arguments - needs an integer 2"
+# 			exit 2
+# 		fi
+# 		step=$4
+# 		var1=`echo $((($step*2)/2))`
+# 		if [ "$step" != "$var1" ]
+# 			then
+# 			echo "Incorrect Arguments - needs an integer 3"
+# 			exit 2
+# 		fi
+# 		if [ "$5" != "-n" ]
+# 			then
+# 			echo "Incorrect Arguments"
+# 			exit 2
+# 		else
+# 			num=$6
+# 			var1=`echo $((($num*2)/2))` # (applies to all integers) from: http://stackoverflow.com/questions/3623662/bash-testing-if-a-variable-is-an-integer
+# 			if [ "$num" != "$var1" ]
+# 				then
+# 				echo "Incorrect Arguments - needs an integer 4"
+# 				exit 2
+# 			fi
+# 		fi
+# 	fi
+# elif [ "$#" == 2 ]
+# 	then
+# 	echo "2 arguments"
+# 	if [ "$1" == "-r" ]
+# 		then
+# 	  filename=$2
+# 		echo "$filename"
+# 		if ! [ -f $filename ]
+# 			then
+# 			echo "No such file!"
+# 			exit 2
+# 		fi
+# 		lastline=$(tail -1 $filename)
+# 		echo "$lastline"
+# 
+# 		head -n -1 $filename > temp.txt
+# 		mv temp.txt beetle.state
+# 		sh boiler $lastline
+# 		exit 0
+# 	fi
+# elif [ "$#" == 8 ]
+# 	then
+# 	echo "8 arguments"
+# 	
+# 	
+# 	if [ "$1" == "-i" ]
+# 		then
+# 		min=$2
+# 		var1=`echo $((($min*2)/2))`
+# 		if [ "$min" != "$var1" ]
+# 			then
+# 			echo "Incorrect Arguments - needs an integer 1"
+# 			exit 2
+# 		fi
+# 		max=$3
+# 		var1=`echo $((($max*2)/2))`
+# 		if [ "$max" != "$var1" ]
+# 			then
+# 			echo "Incorrect Arguments - needs an integer 2"
+# 			exit 2
+# 		fi
+# 		step=$4
+# 		var1=`echo $((($step*2)/2))`
+# 		if [ "$step" != "$var1" ]
+# 			then
+# 			echo "Incorrect Arguments - needs an integer 3"
+# 			exit 2
+# 		fi
+# 		if [ "$5" != "-n" ] && [ "$5" != "-p" ]
+# 			then
+# 			echo "Incorrect Arguments 1"
+# 			exit 2
+# 		elif [ "$5" == "-n" ]
+# 			then
+# 			num=$6
+# 			var1=`echo $((($num*2)/2))` # (applies to all integers) from: http://stackoverflow.com/questions/3623662/bash-testing-if-a-variable-is-an-integer
+# 			if [ "$num" != "$var1" ]
+# 				then
+# 				echo "Incorrect Arguments - needs an integer 4"
+# 				exit 2
+# 			fi
+# 		elif [ "$5" == "-p" ]
+# 			then
+# 			imageFlag=1
+# 			imageFile=$6	
+# 		fi
+# 		
+# 		
+# 		if [ "$7" == "-n" ] && [ "$5" != "-p" ]
+# 			then
+# 			echo "Incorrect Arguments 2"
+# 			exit 2
+# 		elif [ "$7" == "-p" ] && [ "$5" != "-n" ]
+# 			then
+# 			echo "Incorrect Arguments 3" 
+# 			exit 2
+# 		elif [ "$7" == "-p" ] && [ "$5" == "-n" ]
+# 			then
+# 			imageFlag=1
+# 			imagefile=$8
+# 		elif [ "$7" == "-n" ] && [ "$5" == "-p" ]
+# 			then
+# 			num=$8
+# 			var1=`echo $((($num*2)/2))` # (applies to all integers) from: http://stackoverflow.com/questions/3623662/bash-testing-if-a-variable-is-an-integer
+# 			if [ "$num" != "$var1" ]
+# 				then
+# 				echo "Incorrect Arguments - needs an integer 4"
+# 				exit 2
+# 			fi
+# 		else
+# 			echo "Incorrect Arguments 5"
+# 			exit 2
+# 		fi
+# 		
+# 	fi
+# 		 
+# else
+# 	echo "Incorrect number of arguments"
+# 	exit 2
+# fi

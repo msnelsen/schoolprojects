@@ -1,0 +1,6 @@
+p2test/d1/f1:5:only a three lines have a "the" in them
+p2test/d1/f1:7:several other words
+p2test/<3/f1:10:another paragraph without a match
+p2test/f2:2:Want to see the and, by implication, there.
+p2test/f2:3:THere might work too.
+p2test/f3:2:the the
